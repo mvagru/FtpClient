@@ -92,7 +92,7 @@ namespace FTP_CLIENT
             ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://" + sHost + path + "/" + fileName);
             /* Проверка логина\пароля */
             ftpRequest.Credentials = new NetworkCredential(sUsername, sPassword);
-            /* Загрузка */
+            /* Скачивание */
             ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
             /* SSL если необходим */
             ftpRequest.EnableSsl = sUseSSL;
@@ -111,6 +111,30 @@ namespace FTP_CLIENT
             downloadedFile.Close();
             responceStream.Close();
         }
+        /* Загрузка файла на сервер */
+        public void UploadFile(string path, string fileName)
+        {
+            /* Путь */
+            ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://" + sHost + path);
+            /* Проверка логина\пароля */
+            ftpRequest.Credentials = new NetworkCredential(sUsername, sPassword);
+            /* SSL если необходим */
+            ftpRequest.EnableSsl = sUseSSL;
+            /* Загрузка */
+            ftpRequest.Method = WebRequestMethods.File.UploadFile;
+            /* Запрашивае поток на фтп */
+            FileStream uploadedFile = new FileStream(fileName,FileMode.Open,FileAccess.Read);            
+            /* Буффер */
+            byte[] files_to_bytes = new byte[uploadedFile.Length];
+            /* Вносим данные */
+            uploadedFile.Read(files_to_bytes, 0, files_to_bytes.Length);
+            uploadedFile.Close();
+            /* Поток загрузки */
+            Stream writer = ftpRequest.GetRequestStream();
+            writer.Write(files_to_bytes, 0, files_to_bytes.Length);
+            writer.Close();
+        }
+
 
     }
 }
