@@ -159,7 +159,16 @@ namespace FTP_CLIENT
             ftpResponse.Close();
         }
         /* Удаление каталога */
-
+        public void RemoveDirectory(string path)
+        {
+            string filename = path;
+            FtpWebRequest ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://" + sHost + path);
+            ftpRequest.Credentials = new NetworkCredential(sUsername, sPassword);
+            ftpRequest.EnableSsl = sUseSSL;
+            ftpRequest.Method = WebRequestMethods.Ftp.RemoveDirectory;
+            FtpWebResponse ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+            ftpResponse.Close();
+        }
 
     }
 }
